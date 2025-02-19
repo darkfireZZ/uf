@@ -1,12 +1,13 @@
 [package]
 name = "uf"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "Unlicense"
 description = "Minimalistic file opener"
 repository = "https://github.com/darkfirezz/uf"
 categories = [ "command-line-utilities" ]
 keywords = [ "minimal", "cli", "file", "opener", "mime" ]
+publish = false
 
 [[bin]]
 name = "uf"
