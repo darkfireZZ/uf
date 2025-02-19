@@ -1,6 +1,6 @@
 use {
     crate::Config,
-    anyhow::{anyhow, Context},
+    anyhow::Context,
     std::{
         env, io,
         os::unix::process::CommandExt,
@@ -88,9 +88,7 @@ impl Cli {
 
     pub fn run(&self) -> anyhow::Result<()> {
         let config = Config::load()?;
-        let program = config
-            .get_program(&self.file)?
-            .ok_or_else(|| anyhow!("No program set for the given file type"))?;
+        let program = config.get_program(&self.file)?;
         Err(Command::new(program).arg(&self.file).exec()).context("Failed to open the file")
     }
 }

@@ -62,13 +62,14 @@ impl Config {
     /// - The configuration file is invalid.
     pub fn load() -> anyhow::Result<Self> {
         let config_path = config_path()?;
-        let config_file = File::open(&config_path).map_err(|error| {
-            match error.kind() {
-                io::ErrorKind::NotFound => {
-                    anyhow!("Config file not found: {}", config_path.display())
-                }
-                _ => anyhow::Error::new(error).context(format!("Failed to open config file: {}", config_path.display())),
+        let config_file = File::open(&config_path).map_err(|error| match error.kind() {
+            io::ErrorKind::NotFound => {
+                anyhow!("Config file not found: {}", config_path.display())
             }
+            _ => anyhow::Error::new(error).context(format!(
+                "Failed to open config file: {}",
+                config_path.display()
+            )),
         })?;
         let config_reader = BufReader::new(config_file);
 
@@ -120,20 +121,29 @@ impl Config {
         Ok(Self { mappings })
     }
 
-    pub fn get_program<P: AsRef<Path>>(&self, file_path: P) -> anyhow::Result<Option<&str>> {
+    pub fn get_program<P: AsRef<Path>>(&self, file_path: P) -> anyhow::Result<&str> {
         let extension = file_path.as_ref().extension();
         let mime = crate::mime_type(&file_path)?;
 
-        Ok(self.mappings.iter().find_map(|mapping| match mapping {
-            Mapping::Extension {
-                extension: map_extension,
-                program,
-            } if Some(map_extension.as_os_str()) == extension => Some(program.as_str()),
-            Mapping::Mime {
-                mime: map_mime,
-                program,
-            } if *map_mime == mime => Some(program.as_str()),
-            _ => None,
-        }))
+        self.mappings
+            .iter()
+            .find_map(|mapping| match mapping {
+                Mapping::Extension {
+                    extension: map_extension,
+                    program,
+                } if Some(map_extension.as_os_str()) == extension => Some(program.as_str()),
+                Mapping::Mime {
+                    mime: map_mime,
+                    program,
+                } if *map_mime == mime => Some(program.as_str()),
+                _ => None,
+            })
+            .ok_or_else(|| match extension {
+                Some(extension) => anyhow!(
+                    "No program found for MIME type '{mime}', extension '{}'",
+                    extension.to_string_lossy()
+                ),
+                None => anyhow!("No program found for MIME type '{mime}'"),
+            })
     }
 }
