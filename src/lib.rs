@@ -16,20 +16,16 @@
 #![allow(clippy::module_name_repetitions, reason = "Occasionally useful")]
 #![allow(clippy::too_many_lines, reason = "This is not bad in my opinion")]
 
-use {
-    anyhow::{anyhow, Context},
-    std::{
-        path::Path,
-        process::{Command, ExitCode},
-        str,
-    },
-};
+use std::process::ExitCode;
 
 mod cli;
 pub(crate) use cli::Cli;
 
 mod config;
 pub(crate) use config::Config;
+
+mod mime;
+pub(crate) use mime::MimeType;
 
 /// Run the application.
 #[must_use]
@@ -41,27 +37,5 @@ pub fn run() -> ExitCode {
             eprintln!("Error: {error:#}");
             ExitCode::FAILURE
         }
-    }
-}
-
-/// Get the MIME type of a file.
-///
-/// # Errors
-///
-/// Fails if the MIME type cannot be determined.
-fn mime_type<P: AsRef<Path>>(file_path: P) -> anyhow::Result<String> {
-    let output = Command::new("file")
-        .arg("--brief")
-        .arg("--mime-type")
-        .arg(file_path.as_ref())
-        .output()
-        .context("Failed to execute 'file' command")?;
-
-    if output.status.success() {
-        let mime_type = str::from_utf8(&output.stdout).context("'file' output is invalid UTF-8")?;
-        Ok(mime_type.trim().to_string())
-    } else {
-        let error = String::from_utf8_lossy(&output.stderr);
-        Err(anyhow!("{}", error).context("'file' command failed"))
     }
 }
