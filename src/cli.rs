@@ -61,7 +61,7 @@ impl Cli {
         let args: Vec<String> = env::args_os()
             .map(|arg| {
                 arg.into_string().unwrap_or_else(|arg| {
-                    eprintln!("Error: {:?}", arg);
+                    eprintln!("Error: {arg:?}");
                     process::exit(1);
                 })
             })

@@ -83,13 +83,17 @@ impl Config {
     /// Fails in any of the following cases:
     /// - The configuration file cannot be read.
     /// - The configuration file is invalid.
+    #[allow(
+        clippy::match_on_vec_items,
+        reason = "Using get() instead of [] would be unnecessarily verbose."
+    )]
     fn parse<R: BufRead>(reader: R) -> anyhow::Result<Self> {
         let mappings = reader
             .lines()
             .enumerate()
             .map(|(line_index, line)| (line_index + 1, line))
             .map(|(line_number, line)| {
-                let line = line.with_context(|| format!("Failed to read line {}", line_number))?;
+                let line = line.with_context(|| format!("Failed to read line {line_number}"))?;
                 let line = line
                     .split_once('#')
                     .map_or(line.as_str(), |(line, _)| line)
@@ -114,7 +118,7 @@ impl Config {
                     _ => bail!("Invalid line: {}", line),
                 }
             })
-            .filter_map(|result| result.transpose())
+            .filter_map(Result::transpose)
             .collect::<anyhow::Result<Vec<_>>>()
             .context("Failed to parse config file")?;
 
