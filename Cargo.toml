@@ -8,5 +8,9 @@ repository = "https://github.com/darkfirezz/uf"
 categories = [ "command-line-utilities" ]
 keywords = [ "minimal", "cli", "file", "opener", "mime" ]
 
+[[bin]]
+name = "uf"
+path = "src/main.rs"
+
 [dependencies]
 anyhow = "1.0.95"
