@@ -46,7 +46,7 @@ After you have `cargo` installed, you can install `uf` by running the
 following command:
 
 ```sh
-cargo install --git https://github.com/darkfireZZ/uf --tag v0.1.0
+cargo install uf
 ```
 
 ## License
