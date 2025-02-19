@@ -1,3 +1,4 @@
+#![doc = include_str!("../README.md")]
 #![warn(
     clippy::pedantic,
     clippy::absolute_paths,
