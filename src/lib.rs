@@ -1,5 +1,6 @@
 #![doc = include_str!("../README.md")]
 #![warn(
+    clippy::cargo,
     clippy::pedantic,
     clippy::absolute_paths,
     clippy::allow_attributes_without_reason,
