@@ -121,6 +121,13 @@ impl Config {
         Ok(Self { mappings })
     }
 
+    /// Get the program configured for opening a file.
+    ///
+    /// # Errors
+    ///
+    /// Fails in any of the following cases:
+    /// - The MIME type of the file cannot be determined.
+    /// - No program is configured for the file.
     pub fn get_program<P: AsRef<Path>>(&self, file_path: P) -> anyhow::Result<&str> {
         let extension = file_path.as_ref().extension();
         let mime = crate::mime_type(&file_path)?;

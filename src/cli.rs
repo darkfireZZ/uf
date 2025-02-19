@@ -36,15 +36,27 @@ Options:
     };
 }
 
+/// The help message of the CLI.
 const HELP: &str = concat!(usage!(), help_body!());
+/// The message to display when the CLI is called with invalid arguments.
 const ERROR_HELP: &str = concat!(usage!(), error_help_body!());
 
+/// The CLI arguments.
 #[derive(Debug)]
 pub struct Cli {
     file: String,
 }
 
 impl Cli {
+    /// Parse the command line arguments.
+    ///
+    /// If the arguments are any of the simple flags
+    /// - `-h`, `--help`
+    /// - `-v`, `--version`
+    ///
+    /// the program executes the corresponding action and exits.
+    ///
+    /// If the arguments are invalid, the program prints an error message and exits.
     pub fn parse() -> Self {
         let args: Vec<String> = env::args_os()
             .map(|arg| {
@@ -78,14 +90,17 @@ impl Cli {
         }
     }
 
+    /// Print the help message.
     fn print_help<W: io::Write>(mut out: W) {
         let _ = out.write_all(HELP.as_bytes());
     }
 
+    /// Print the error message used when the CLI is called with invalid arguments.
     fn print_error_help<W: io::Write>(mut out: W) {
         let _ = out.write_all(ERROR_HELP.as_bytes());
     }
 
+    /// Run the program with the given arguments.
     pub fn run(&self) -> anyhow::Result<()> {
         let config = Config::load()?;
         let program = config.get_program(&self.file)?;

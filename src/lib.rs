@@ -8,11 +8,12 @@ use {
 };
 
 mod cli;
-pub use cli::Cli;
+pub(crate) use cli::Cli;
 
 mod config;
-pub use config::Config;
+pub(crate) use config::Config;
 
+/// Run the application.
 pub fn run() -> ExitCode {
     let args = Cli::parse();
     match args.run() {
