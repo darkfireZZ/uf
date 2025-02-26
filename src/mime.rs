@@ -23,6 +23,7 @@ impl MimeType {
     pub fn detect<P: AsRef<Path>>(file_path: P) -> anyhow::Result<Self> {
         let output = Command::new("file")
             .arg("--brief")
+            .arg("--dereference")
             .arg("--mime-type")
             .arg(file_path.as_ref())
             .output()
